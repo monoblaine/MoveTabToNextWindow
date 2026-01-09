@@ -32,5 +32,14 @@
     "move-tab": {
       "description": "Move Tab to Next Window"
     }
+  },
+  "browser_specific_settings": {
+      "gecko": {
+          "id": "move_tab_to_window@serhan.com",
+          "strict_min_version": "102.0",
+          "data_collection_permissions": {
+              "required": ["none"]
+          }
+      }
   }
 }
