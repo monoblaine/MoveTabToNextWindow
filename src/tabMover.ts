@@ -31,31 +31,31 @@ export class TabMover {
     }
   ) {}
 
-  async moveTabOrHighlightedTabs(tab: Tab) {
+  async moveTabOrHighlightedTabs(tab: Tab, next: Boolean) {
     const highlightedTabs = await browser.tabs.query({
       highlighted: true,
       currentWindow: true,
     });
     if (highlightedTabs.length > 1) {
       for (const tab of highlightedTabs) {
-        await this.moveTab(tab);
+        await this.moveTab(tab, next);
       }
     } else {
-      await this.moveTab(tab);
+      await this.moveTab(tab, next);
     }
   }
 
-  async moveActiveTab() {
+  async moveActiveTab(next: Boolean) {
     const tabs = await browser.tabs.query({
       active: true,
       currentWindow: true,
     });
     if (tabs[0] != null) {
-      await this.moveTab(tabs[0]);
+      await this.moveTab(tabs[0], next);
     }
   }
 
-  private async moveTab(tab: Tab) {
+  private async moveTab(tab: Tab, next: Boolean) {
     if (tab.id == null || tab.windowId == null) {
       return;
     }
@@ -71,7 +71,7 @@ export class TabMover {
       (window) => window.id != null && window.type === "normal"
     );
     const currentTabWindowIndex = allWindows.findIndex((window) => window.id === tab.windowId);
-    const targetWindowId = allWindows[(currentTabWindowIndex + 1) % allWindows.length]?.id;
+    const targetWindowId = allWindows[(currentTabWindowIndex + (next ? 1 : -1)) % allWindows.length]?.id;
 
     if (allWindows.length <= 1 || targetWindowId == null) {
       await this.tabMoveWrapper(tab, async () => {
